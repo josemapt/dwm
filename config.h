@@ -3,52 +3,57 @@
 #include <X11/XF86keysym.h> // for XF86 keys
 
 /* appearance */
-static const unsigned int borderpx  = 2;        /* border pixel of windows */
-static const unsigned int gappx     = 4;        /* gaps pixel between windows */
+static const unsigned int borderpx  = 1;        /* border pixel of windows */
+static const unsigned int gappx     = 6;        /* gaps pixel between windows */
 static const unsigned int snap      = 32;       /* snap pixel */
+
 static const unsigned int systraypinning = 0;   /* 0: sloppy systray follows selected monitor, >0: pin systray to monitor X */
 static const unsigned int systrayspacing = 2;   /* systray spacing */
 static const int systraypinningfailfirst = 1;   /* 1: if pinning fails, display systray on the first monitor, False: display systray on the last monitor*/
 static const int showsystray        = 1;        /* 0 means no systray */
+
 static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
-static const int bar_height         = 35;       /* 0 means that dwm will calculate bar height */
-static const char *fonts[]          = { "UbuntuMono Nerd Font:size=18" };
-static const char dmenufont[]       = "monospace:size=18";
-static const char col_gray1[]       = "#222222";
-static const char col_gray2[]       = "#444444";
-static const char col_gray3[]       = "#bbbbbb";
-static const char col_gray4[]       = "#eeeeee";
+static const int bar_height         = 30;       /* 0 means that dwm will calculate bar height */
 
-static const char col_bg[]			= "#454545";
-static const char col_fg[]			= "#e5e5e5";
+static const char *fonts[]          = { "UbuntuMono Nerd Font:size=16",
+											"material\\-wifi:size=18" };
+static const char dmenufont[]       = "monospace:size=18";
+
+/* Deep purple */
+static const char col_shade1[]      = "#454545";
+static const char col_shade2[]      = "#454545";
+static const char col_shade3[]      = "#454545";
+static const char col_shade4[]      = "#454545";
+static const char col_shade5[]      = "#454545";
+static const char col_shade6[]      = "#454545";
 
 static const char col_cyan[]        = "#005577";
 static const char col_magenta[]     = "#a47de9";
-static const char col1[]            = "#ffffff";
-static const char col2[]            = "#ffffff";
-static const char col3[]            = "#ffffff";
-static const char col4[]            = "#ffffff";
-static const char col5[]            = "#ffffff";
-static const char col6[]            = "#ffffff";
+static const char col_teal[]     	= "#00695C";
+
+static const char col_bg[]			= "#454545";
+static const char col_fg[]			= "#e5e5e5";
+static const char col_border[]		= "#a47de9";
 
 enum { SchemeNorm, SchemeCol1, SchemeCol2, SchemeCol3, SchemeCol4,
-		SchemeCol5, SchemeCol6, SchemeSel }; /* color schemes */
+		SchemeCol5, SchemeCol6, SchemeSel, SchemeTitle }; /* color schemes */
 
 static const char *colors[][3]      = {
-	/*               fg        bg       border   */
-	[SchemeNorm]  = { col_gray3, col_gray1, col_gray2 },
-	[SchemeCol1]  = { col1,      col_gray1, col_gray2 },
-	[SchemeCol2]  = { col2,      col_gray1, col_gray2 },
-	[SchemeCol3]  = { col3,      col_gray1, col_gray2 },
-	[SchemeCol4]  = { col4,      col_gray1, col_gray2 },
-	[SchemeCol5]  = { col5,      col_gray1, col_gray2 },
-	[SchemeCol6]  = { col6,      col_gray1, col_gray2 },
-	[SchemeSel]   = { col_gray4, col_magenta,  col_cyan  },
+	/*               fg        	 bg         	border   */
+	[SchemeNorm]  = { col_fg,	col_bg,			col_border },
+	[SchemeCol1]  = { col_fg,	col_shade1,		col_border },
+	[SchemeCol2]  = { col_fg,	col_shade2,		col_border },
+	[SchemeCol3]  = { col_fg,	col_shade3,		col_border },
+	[SchemeCol4]  = { col_fg,	col_shade4,		col_border },
+	[SchemeCol5]  = { col_fg,	col_shade5,		col_border },
+	[SchemeCol6]  = { col_fg,	col_shade6,		col_border },
+	[SchemeSel]   = { col_fg,	col_magenta,	col_border  },
+	[SchemeTitle] = { col_fg,	col_magenta,	col_border  },
 };
 
 /* tagging */
-static const char *tags[] = { "1", "2", "3", "4", "5", "6" };
+static const char *tags[] = { " ", " ", " ", " ", " ", " ", " " };
 
 static const Rule rules[] = {
 	/* xprop(1):
@@ -112,11 +117,14 @@ static Key keys[] = {
 	{ MODKEY,                       XK_space,  setlayout,      {0} },
 	{ MODKEY|ShiftMask,             XK_space,  togglefloating, {0} },
 
+	{ MODKEY,                       XK_Up,     setmfact,       {.f = -0.05} },
+	{ MODKEY,                       XK_Down,   setmfact,       {.f = +0.05} },
+
 	{ MODKEY|ShiftMask,             XK_b,      togglebar,      {0} },
-	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
-	{ MODKEY,                       XK_k,      focusstack,     {.i = -1 } },
-	{ MODKEY,                       XK_h,      setmfact,       {.f = -0.05} },
-	{ MODKEY,                       XK_l,      setmfact,       {.f = +0.05} },
+	{ MODKEY,                       XK_u,      focusstack,     {.i = +1 } },
+	{ MODKEY,                       XK_i,      focusstack,     {.i = -1 } },
+	{ MODKEY,               		XK_Right,  incnmaster,     {.i = +1 } },
+	{ MODKEY,               		XK_Left,   incnmaster,     {.i = -1 } },
 	{ MODKEY,                       XK_comma,  focusmon,       {.i = -1 } },
 	{ MODKEY,                       XK_period, focusmon,       {.i = +1 } },
 	{ MODKEY|ShiftMask,             XK_comma,  tagmon,         {.i = -1 } },
